@@ -50,16 +50,28 @@ public class Attributes extends Object
 		}
 		else if(aString == "output")
 		{
-			String[] aCollection = new String[]
+			String[] keys = new String[]
 			{
 				"no", "order", "names", "kana", "period","day", "school",
 				"party", "birth", "image"
 			};
 			
-			for(String outputString : aCollection)
+			String[] names = new String[]
 			{
-				this.keys.add(outputString);
+				"人目", "代", "氏名", "ふりがな", "在位期間","在位日数", "出身校",
+				"政党", "出身地", "画像"
+			};
+			
+			for(String key : keys)
+			{
+				this.keys.add(key);
 			}
+			
+			for(String name : names)
+			{
+				this.names.add(name);
+			}
+			
 		}
 		else
 		{
@@ -221,7 +233,7 @@ public class Attributes extends Object
 	}
 	
 	/**
-	 *	名前群を設定する。
+	 * 名前群を設定する。
 	 * 良好（2013年12月9日）
 	 */
 	public void names(ArrayList<String> aCollection)

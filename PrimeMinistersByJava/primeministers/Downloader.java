@@ -5,10 +5,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.MalformedURLException;
 
 /**
  * ダウンローダ：総理大臣のCSVファイル・画像ファイル・サムネイル画像ファイルをダウンロードする。
- * バグ（2013年12月9日）
+ * 良好（2013年12月16日）
  */
 public class Downloader extends IO
 {
@@ -42,9 +44,9 @@ public class Downloader extends IO
 		ArrayList<String> aCollection = IO.readTextFromURL(this.url);
 		File aFile = new File(IO.directoryOfPages(),"PrimeMinisters.csv");
 		IO.writeText(aCollection, aFile);
+		
 		return;
 	}
-	
 	
 	/**
 	 * 総理大臣の画像群をダウンロードする。
@@ -52,43 +54,14 @@ public class Downloader extends IO
 	 */
 	public void downloadImages()
 	{
-		ArrayList<BufferedImage> images =this.table.images();
-		boolean result = false;	
-
 		File aFile = new File(IO.directoryOfPages(),"images");
 		if(aFile.exists() == false)
 		{
 			aFile.mkdir();
 		}
-
-
-		for(Tuple aTuple :this.table().tuples()){
-			try{
-				int index = aTuple.attributes().indexOfImage();
-				String str = (aTuple.values().get(index));
-
-				System.out.println(this.urlString()+aTuple.values().get(index));
-				BufferedImage image = ImageIO.read(new URL(this.urlString()+aTuple.values().get(index))); 
-				images.add(image);
-			
-				try {
-					System.out.println("あ:"+str);
-					result = ImageIO.write(image, "jpeg", new File(IO.directoryOfPages(),str));
-				} catch (Exception e) {
-					e.printStackTrace();
-					result = false;
-				}
-
-			
-			}
-			catch (Exception anException)
-			{
-				anException.printStackTrace();
-				System.out.println("しっぱい");
-
-			}	
-
-		}
+		int index = this.table.attributes().indexOfImage();
+		this.downloadPictures(index);
+		
 		return;
 	}
 	
@@ -98,19 +71,48 @@ public class Downloader extends IO
 	 */
 	private void downloadPictures(int indexOfPicture)
 	{
-		/*
-		BufferedImage readImage;
-		BufferedImage readThumbnail;
-		try
+		for(Tuple aTuple : this.table().tuples())
 		{
-			readImage = ImageIO.read(new URL(this.urlString()+"images/0"+Integer.toString(indexOfPicture)+".jpg"));
-			readThumbnail = ImageIO.read(new URL(this.urlString()+"thumbnails/0"+Integer.toString(indexOfPicture)+".jpg"));
+			URL aURL = null;
+			BufferedImage anImage = null;
+			String aString = aTuple.values().get(indexOfPicture);
+			try
+			{
+				aURL = new URL(this.urlString() + aString);
+			}
+			catch (MalformedURLException anException)
+			{
+				anException.printStackTrace();
+			}
+			
+			try
+			{
+				anImage = ImageIO.read(aURL);
+				System.out.println(this.urlString()+aTuple.values().get(indexOfPicture));
+			}
+			catch (IOException anException)
+			{
+				anException.printStackTrace();
+			}
+			
+			try
+			{
+				ImageIO.write(anImage, "jpeg", new File(IO.directoryOfPages(),aString));
+			}
+			catch (IOException anException)
+			{
+				anException.printStackTrace();
+			}
+			
+			if (indexOfPicture == aTuple.attributes().indexOfThumbnail())
+			{
+				this.table.thumbnails().add(anImage);
+			}
+			else
+			{
+				this.table.images().add(anImage);
+			}
 		}
-		catch (Exception anException)
-		{
-			anException.printStackTrace();
-		}
-		*/
 		return;
 	}
 	
@@ -120,39 +122,14 @@ public class Downloader extends IO
 	 */
 	public void downloadThumbnails()
 	{
-		ArrayList<BufferedImage> thumbnails =this.table.thumbnails();
-		boolean result = false;	
 		File aFile = new File(IO.directoryOfPages(),"thumbnails");
-			if(aFile.exists() == false)
-			{
-				aFile.mkdir();
-			}
+		if(aFile.exists() == false)
+		{
+			aFile.mkdir();
+		}
+		int index = this.table.attributes().indexOfThumbnail();
+		this.downloadPictures(index);
 
-		for(Tuple aTuple :this.table().tuples()){
-			try{
-				int index = aTuple.attributes().indexOfThumbnail();
-				String str = (aTuple.values().get(index));
-
-				System.out.println(this.urlString()+aTuple.values().get(index));
-				BufferedImage image = ImageIO.read(new URL(this.urlString()+aTuple.values().get(index)));
-				thumbnails.add(image);
-				
-				try {
-					System.out.println("あ:"+str);
-					result = ImageIO.write(image, "jpeg", new File(IO.directoryOfPages(),str));
-				} catch (Exception e) {
-					e.printStackTrace();
-					result = false;
-				}
-			
-			}
-			catch (Exception anException)
-			{
-				anException.printStackTrace();
-				System.out.println("しっぱい");
-
-			}
-		}	
 		return;
 	}
 	
@@ -166,9 +143,9 @@ public class Downloader extends IO
 	{
 		Reader aReader = new Reader();
 		this.table = aReader.table();
-		
 		//this.downloadImages();
 		//this.downloadThumbnails();
+		
 		return this.table;
 	}
 	
@@ -189,7 +166,6 @@ public class Downloader extends IO
 	{
 		return "http://www.cc.kyoto-su.ac.jp/~atsushi/Programs/CSV2HTML/PrimeMinisters/";
 	}
-	
 	
 	/**
 	 * 総理大臣の情報を記したCSVファイル在処(URL)を文字列で応答するクラスメソッド。

@@ -9,6 +9,7 @@
   <property name="instdir" value="./${ant.project.name}.app/Contents/Resources/Java" />
   <property name="copyright" value="Copyright 2008-2013 AOKI Atsushi. All Right Reserved." />
   <property name="zipname" value="${ant.project.name}ByJava" />
+<property name="directoryOfPages" location="${user.home}/Desktop/SouriDaijin/" />
 
   <tstamp>
     <format property="date" pattern="yyyy/MM/dd" />
@@ -64,6 +65,10 @@
   <target name="test" depends="all" description="test">
     <exec executable="java" spawn="false">
       <arg line="-Xmx512m -Xss1024k -jar ${package}.jar" />
+    </exec>
+    
+    <exec executable="open" dir="${directoryOfPages}">
+        <arg line="index.html" />
     </exec>
     <echo>on ${date} at ${time}</echo>
   </target>

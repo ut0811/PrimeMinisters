@@ -5,6 +5,9 @@ import io
 import table
 import tuple
 
+import csv
+import codecs
+
 class Reader(io.IO):
 	"""リーダ：総理大臣の情報を記したCSVファイルを読み込んでテーブルに仕立て上げる。"""
 
@@ -15,10 +18,10 @@ class Reader(io.IO):
 
 	def table(self):
 		"""ダウンロードしたCSVファイルを読み込んでテーブルを応答する。"""
-		csv_file = self.read_csv(self._csv_filename)
-		csv_table = table.Table(csv_file[0])
-		csv_file.pop(0)
-		for row in csv_file:
-			a_list = row.split(",")
-			csv_table.add(tuple.Tuple(csv_table.attributes(), a_list))
+		csv_table = table.Table('input')
+		is_first = True
+		with open(self._csv_filename,'rU') as aFile:
+			reader = csv.reader(aFile)
+			for row in reader:
+				csv_table.add(tuple.Tuple(csv_table.attributes(), row))
 		return csv_table

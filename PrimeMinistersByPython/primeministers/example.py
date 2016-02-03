@@ -19,7 +19,7 @@ class Example(object):
 		# すでに存在すれば、当該ディレクトリを消して、新たに作り、
 		# 存在しなければ、当該ディレクトリを作成する。
 		home_directory = os.environ['HOME']
-		base_directory = home_directory + '/Desktop/SouriDaijin'
+		base_directory = home_directory + '/Desktop/SouriDaijin/'
 		if os.path.isdir(base_directory):
 			shutil.rmtree(base_directory)
 		os.makedirs(base_directory)
@@ -35,7 +35,7 @@ class Example(object):
 		a_translator = translator.Translator(a_table)
 		a_table = a_translator.table()
 		print a_table
-        
+		
 		# ライタに出力となるテーブルを渡して、
 		# Webページを作成してもらう。
 		a_writer = writer.Writer(base_directory, a_table)

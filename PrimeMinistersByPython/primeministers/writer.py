@@ -30,19 +30,17 @@ class Writer(io.IO):
 	def write_body(self, file):
 		"""ボディを書き出す。つまり、属性リストを書き出し、タプル群を書き出す。"""
 		file.write("\t\t\t\t\t\t<tr>\n")
-		for var in self._table.attributes().names():
-			file.write("\t\t\t\t\t\t\t<td class=\"center-pink\"><strong>"+var+"</strong></td>\n")
+		for a_name in self._table.attributes().names():
+			file.write("\t\t\t\t\t\t\t<td class=\"center-pink\"><strong>" + a_name + "</strong></td>\n")
 		file.write("\t\t\t\t\t\t<tr>\n")
-		count = 0;
-		for foo in self._table.tuple():
+		for index,a_tuple in enumerate(self._table.tuples()):
 			file.write("\t\t\t\t\t\t<tr>\n");
-			for bar in foo.values():
-				if count%2==0:
-					file.write("\t\t\t\t\t\t\t<td class=\"center-blue\">"+bar+"</td>\n");
+			for a_value in a_tuple.values():
+				if index % 2 == 0:
+					file.write("\t\t\t\t\t\t\t<td class=\"center-blue\">" + a_value + "</td>\n");
 				else:
-					file.write("\t\t\t\t\t\t\t<td class=\"center-yellow\">"+bar+"</td>\n");
+					file.write("\t\t\t\t\t\t\t<td class=\"center-yellow\">" + a_value + "</td>\n");
 			file.write("\t\t\t\t\t\t</tr>\n");
-			count = count + 1
 		return
 
 	def write_footer(self, file):

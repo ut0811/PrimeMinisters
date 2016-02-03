@@ -8,9 +8,10 @@ class IO(object):
 
 	def read_csv(self, filename):
 		"""指定されたファイルをCSVとして読み込む。"""
-		self._table =
+		self._table = csv.reader(open(filename , 'r'), delimiter=' ', quotechar='|')
+		
 		return None
-
+	
 	def write_csv(self, filename, rows):
 		"""指定されたファイルにCSVとして行たち(rows)を書き出す。"""
 		return
